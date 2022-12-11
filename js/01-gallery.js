@@ -20,6 +20,19 @@ const galleryList = document.querySelector(".gallery");
 galleryList.innerHTML = addGalleryItem;
 
 galleryList.addEventListener("click", onOpenModal);
+const instance = basicLightbox.create(
+  ` <img src="" >`,
+  {
+    onShow: (instance) => {
+      window.addEventListener("keydown", onEscapeCloseModal);
+    },
+  },
+  {
+    onClose: (instance) => {
+      window.removeEventListener("keydown", onEscapeCloseModal);
+    },
+  }
+);
 
 function onOpenModal(evt) {
   evt.preventDefault();
@@ -27,19 +40,13 @@ function onOpenModal(evt) {
     return;
   }
 
-  document.addEventListener("keydown", onEscapeCloseModal);
-
-  const instance = basicLightbox.create(
-    `
-    <img src="${evt.target.dataset.source}" width="800" height="600">
-`
-  );
-
-  function onEscapeCloseModal(evt) {
-    if (evt.code === "Escape") {
-      return instance.close();
-    }
-  }
+  instance.element().querySelector("img").src = evt.target.dataset.source;
 
   instance.show();
+}
+
+function onEscapeCloseModal(evt) {
+  if (evt.code === "Escape") {
+    return instance.close();
+  }
 }
